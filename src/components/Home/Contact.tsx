@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { FaGithub, FaWhatsapp, FaEnvelope, FaPhone } from "react-icons/fa";
 import { FiSend } from "react-icons/fi";
+import emailjs from "@emailjs/browser";
 
 interface ContactPageProps {
   darkMode: boolean;
 }
 
-// Define form state interface for better type safety
 interface ContactFormState {
   name: string;
   email: string;
@@ -30,7 +30,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ darkMode }) => {
     setForm((prevForm) => ({
       ...prevForm,
       [e.target.name]: e.target.value,
-      status: "idle", // Reset status on input change
+      status: "idle",
       errorMessage: "",
     }));
   };
@@ -43,35 +43,49 @@ const ContactPage: React.FC<ContactPageProps> = ({ darkMode }) => {
       errorMessage: "",
     }));
 
-    try {
-      // Simulate API call or EmailJS integration
-      // Replace with your actual backend or EmailJS logic
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate network delay
+    setTimeout(async () => {
+      try {
+        const serviceID = "service_wvadaig";
+        const templateID = "template_tt7iw1r";
+        const publicKey = "iCU1Eq2oWaWLmnW4s"; // Add this back in properly
 
-      // Example of successful submission
-      console.log("Form submitted successfully:", form);
-      setForm({
-        name: "",
-        email: "",
-        message: "",
-        status: "success",
-        errorMessage: "",
-      });
+        const templateParams = {
+          from_name: form.name,
+          from_email: form.email,
+          message: form.message,
+        };
 
-      // Example of error handling (uncomment to test error state)
-      // throw new Error("Failed to send message. Please try again.");
-    } catch (error: unknown) {
-      console.error("Form submission error:", error);
-      setForm((prevForm) => ({
-        ...prevForm,
-        status: "error",
-        errorMessage:
-          typeof error === "object" && error !== null && "message" in error
-            ? (error as { message?: string }).message ||
-              "An unexpected error occurred. Please try again."
-            : "An unexpected error occurred. Please try again.",
-      }));
-    }
+        const response = await emailjs.send(
+          serviceID,
+          templateID,
+          templateParams,
+          publicKey
+        );
+
+        if (response.status === 200) {
+          setForm({
+            name: "",
+            email: "",
+            message: "",
+            status: "success",
+            errorMessage: "",
+          });
+          console.log("✅ Email sent successfully");
+        } else {
+          throw new Error("Failed to send message");
+        }
+      } catch (error: any) {
+        console.error("❌ Email sending failed:", error);
+        setForm((prevForm) => ({
+          ...prevForm,
+          status: "error",
+          errorMessage:
+            error?.text ||
+            error?.message ||
+            "An unexpected error occurred. Please try again.",
+        }));
+      }
+    }, 150);
   };
 
   return (
@@ -144,17 +158,14 @@ const ContactPage: React.FC<ContactPageProps> = ({ darkMode }) => {
           </a>
         </div>
 
-        {/* Contact Form */}
         <form
           onSubmit={handleSubmit}
-          className={`p-8 rounded-2xl shadow-xl space-y-7 transition-colors duration-300
-                      ${
-                        darkMode
-                          ? "bg-gray-800 border border-gray-700"
-                          : "bg-white border border-gray-200"
-                      }`}
+          className={`p-8 rounded-2xl shadow-xl space-y-7 transition-colors duration-300 ${
+            darkMode
+              ? "bg-gray-800 border border-gray-700"
+              : "bg-white border border-gray-200"
+          }`}
         >
-          {/* Name Input */}
           <div className="flex flex-col">
             <label
               htmlFor="name"
@@ -171,18 +182,16 @@ const ContactPage: React.FC<ContactPageProps> = ({ darkMode }) => {
               required
               value={form.name}
               onChange={handleChange}
-              className={`p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none
-                         ${
-                           darkMode
-                             ? "bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
-                             : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
-                         }`}
+              className={`p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
+                darkMode
+                  ? "bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
+                  : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
+              }`}
               placeholder="Your Name"
               aria-label="Your Name"
             />
           </div>
 
-          {/* Email Input */}
           <div className="flex flex-col">
             <label
               htmlFor="email"
@@ -199,18 +208,16 @@ const ContactPage: React.FC<ContactPageProps> = ({ darkMode }) => {
               required
               value={form.email}
               onChange={handleChange}
-              className={`p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none
-                         ${
-                           darkMode
-                             ? "bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
-                             : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
-                         }`}
+              className={`p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
+                darkMode
+                  ? "bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
+                  : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
+              }`}
               placeholder="you@example.com"
               aria-label="Your Email"
             />
           </div>
 
-          {/* Message Textarea */}
           <div className="flex flex-col">
             <label
               htmlFor="message"
@@ -223,22 +230,20 @@ const ContactPage: React.FC<ContactPageProps> = ({ darkMode }) => {
             <textarea
               id="message"
               name="message"
-              rows={6} // Increased rows for more typing space
+              rows={6}
               required
               value={form.message}
               onChange={handleChange}
-              className={`p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y
-                         ${
-                           darkMode
-                             ? "bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
-                             : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
-                         }`}
+              className={`p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y ${
+                darkMode
+                  ? "bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
+                  : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
+              }`}
               placeholder="Your message here..."
               aria-label="Your Message"
             ></textarea>
           </div>
 
-          {/* Submission Feedback */}
           {form.status === "submitting" && (
             <div className="text-center text-blue-500 dark:text-blue-400">
               Sending your message...
@@ -255,19 +260,14 @@ const ContactPage: React.FC<ContactPageProps> = ({ darkMode }) => {
             </div>
           )}
 
-          {/* Submit Button */}
           <button
             type="submit"
-            disabled={form.status === "submitting"} // Disable button during submission
-            className={`w-full py-3 px-6 inline-flex items-center justify-center gap-2
-                       bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl
-                       shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.01]
-                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                       ${
-                         form.status === "submitting"
-                           ? "opacity-70 cursor-not-allowed"
-                           : ""
-                       }`}
+            disabled={form.status === "submitting"}
+            className={`w-full py-3 px-6 inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.01] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+              form.status === "submitting"
+                ? "opacity-70 cursor-not-allowed"
+                : ""
+            }`}
             aria-label="Send Message"
           >
             {form.status === "submitting" ? (
