@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FaCode, FaGraduationCap, FaMobileAlt, FaServer } from "react-icons/fa";
-import fallbackImage from "../../assets/aboutme.jpg";
+import fallbackImage from "../../assets/aboutme.webp";
 
 interface AboutMeProps {
   darkMode: boolean;

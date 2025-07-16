@@ -2,8 +2,7 @@ import React, { useEffect, useState, memo } from "react";
 import { FaMoon, FaSun } from "react-icons/fa";
 import "../styles/animatedBackground.css"; // Ensure this path is correct and the CSS is optimized
 import DownloadCVButton from "./download";
-import MyImage from "../../assets/ojay877.png";
-import CV from "../../assets/Ojo-Inioluwa-Oluwasemilogo-resume.pdf";
+import MyImage from "../../assets/ojay877.webp";
 
 interface HomePageProps {
   darkMode: boolean;
@@ -113,7 +112,7 @@ const HomePage: React.FC<HomePageProps> = ({
 
               <DownloadCVButton
                 darkMode={darkMode}
-                cvFilePath={CV}
+                cvFilePath="/cv/Ojo-Inioluwa-Oluwasemilogo-resume.pdf"
                 buttonText="Download CV"
               />
             </div>
